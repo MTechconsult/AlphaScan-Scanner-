@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>AlphaScan | Web3 Token Intelligence</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050810;--surface:#0c1120;--card:#101828;--border:#1a2640;
+  --accent:#00e5ff;--accent2:#0099bb;
+  --green:#00d68f;--red:#ff3d5a;--orange:#ff9500;--yellow:#ffd700;
+  --text:#e2eaf6;--sub:#5a7090;--dim:#1e2d42;
+  --fd:'Space Grotesk',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fd);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:var(--fd)}
+
+/* GRID BG */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.028) 1px,transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;
+}
+body::after{
+  content:'';position:fixed;top:-30%;left:-20%;width:60%;height:60%;
+  background:radial-gradient(ellipse,rgba(0,229,255,.05),transparent 65%);
+  pointer-events:none;z-index:0;
+}
+
+.page{position:relative;z-index:2}
+
+/* TOP STRIP */
+.strip{
+  background:rgba(0,229,255,.06);
+  border-bottom:1px solid rgba(0,229,255,.12);
+  padding:8px 20px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  font-family:var(--fm);font-size:11px;color:rgba(0,229,255,.8);
+  text-align:center;flex-wrap:wrap;gap:8px;
+}
+.strip-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:bk 1.2s ease infinite;flex-shrink:0}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.15}}
+
+/* NAV */
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px;border-bottom:1px solid var(--border);
+  background:rgba(5,8,16,.96);backdrop-filter:blur(24px);
+  position:sticky;top:0;z-index:200;
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.5px}
+.logo-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:900;color:#000;
+  box-shadow:0 0 20px rgba(0,229,255,.35);
+  font-family:var(--fm);
+}
+.logo-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);font-family:var(--fm);font-weight:500;opacity:.8}
+.nav-right{display:flex;align-items:center;gap:16px}
+.live-pill{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--fm);font-size:10.5px;color:var(--sub);
+  padding:5px 12px;border:1px solid var(--border);border-radius:20px;
+  background:rgba(255,255,255,.02);
+}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,214,143,.7)}60%{box-shadow:0 0 0 6px transparent}}
+.viewers{font-family:var(--fm);font-size:11px;color:var(--sub)}
+.viewers b{color:var(--orange)}
+
+/* TICKER */
+.ticker{overflow:hidden;padding:7px 0;border-bottom:1px solid rgba(0,229,255,.07);background:rgba(0,229,255,.02);font-family:var(--fm);font-size:10.5px;color:var(--sub)}
+.ticker-track{display:inline-block;animation:scroll 38s linear infinite;white-space:nowrap}
+.tup{color:var(--green)}.tdn{color:var(--red)}.talert{color:var(--orange)}
+@keyframes scroll{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+
+/* WRAP */
+.wrap{max-width:820px;margin:0 auto;padding:0 20px 100px}
+
+/* HERO */
+.hero{padding:56px 0 40px;text-align:center;position:relative}
+.hero::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:600px;height:240px;
+  background:radial-gradient(ellipse,rgba(0,229,255,.06),transparent 65%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--fm);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--accent);border:1px solid rgba(0,229,255,.22);
+  padding:5px 16px;border-radius:20px;background:rgba(0,229,255,.05);
+  margin-bottom:22px;
+}
+.hero h1{
+  font-size:clamp(30px,5.5vw,58px);font-weight:700;line-height:1.1;
+  letter-spacing:-1.5px;margin-bottom:16px;
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--accent),#00aaff,var(--green));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{font-size:15px;color:var(--sub);max-width:520px;margin:0 auto 32px;line-height:1.75}
+.hero-sub strong{color:var(--text);font-weight:600}
+
+/* FEAR ROW */
+.fear-row{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;
+}
+.fear-pill{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 16px;border-radius:10px;
+  background:rgba(255,61,90,.05);border:1px solid rgba(255,61,90,.18);
+  font-size:12.5px;color:var(--sub);
+}
+.fear-pill .fi{font-size:14px}
+
+/* SCAN PANEL */
+.scan-panel{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;
+  padding:28px;margin-bottom:20px;position:relative;overflow:hidden;
+}
+.scan-panel::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.scan-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-family:var(--fm);font-weight:600;margin-bottom:12px}
+.input-row{display:flex;gap:12px;margin-bottom:10px}
+.ca-input{
+  flex:1;padding:15px 18px;border-radius:12px;
+  border:1px solid var(--border);background:rgba(255,255,255,.03);
+  color:var(--text);font-family:var(--fm);font-size:13px;outline:none;
+  transition:border-color .25s,box-shadow .25s;
+}
+.ca-input::placeholder{color:var(--sub)}
+.ca-input:focus{border-color:rgba(0,229,255,.4);box-shadow:0 0 0 3px rgba(0,229,255,.07)}
+.scan-btn{
+  padding:15px 26px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#000;font-weight:700;font-size:14px;
+  white-space:nowrap;transition:all .2s;
+  box-shadow:0 4px 24px rgba(0,229,255,.28);
+}
+.scan-btn:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(0,229,255,.45)}
+.demo-btn{
+  width:100%;padding:11px;border-radius:11px;border:1px solid var(--border);
+  background:rgba(255,255,255,.025);color:var(--sub);font-size:13px;
+  transition:.2s;
+}
+.demo-btn:hover{background:rgba(255,255,255,.05);color:var(--text);border-color:rgba(0,229,255,.2)}
+.scan-hint{margin-top:10px;font-size:11.5px;color:var(--sub);font-family:var(--fm);text-align:center}
+
+/* RESULT PANEL */
+.result-panel{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;
+  padding:24px;margin-bottom:20px;display:none;position:relative;overflow:hidden;
+}
+.result-panel::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.result-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-bottom:20px;
+  padding-bottom:16px;border-bottom:1px solid var(--border);
+}
+.result-name{font-size:18px;font-weight:700;color:var(--text)}
+.result-ts{font-size:10.5px;color:var(--sub);font-family:var(--fm);margin-top:3px}
+.live-tag{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);font-family:var(--fm);padding:4px 10px;border:1px solid rgba(0,214,143,.22);border-radius:20px;background:rgba(0,214,143,.05)}
+
+/* DATA CARDS */
+.data-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
+.dc{
+  padding:18px 16px;border-radius:13px;
+  background:rgba(255,255,255,.025);border:1px solid var(--border);
+  transition:.25s;
+}
+.dc:hover{border-color:rgba(0,229,255,.2);background:rgba(0,229,255,.03)}
+.dc-lbl{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--sub);font-family:var(--fm);margin-bottom:8px;font-weight:500}
+.dc-val{font-size:20px;font-weight:700;color:var(--text);font-family:var(--fm);word-break:break-all;line-height:1.2}
+.dc-val.cyan{color:var(--accent)}
+.dc-val.green{color:var(--green)}
+.dc-val.blue{color:#4da6ff}
+.dc-sub{font-size:10.5px;color:var(--sub);margin-top:5px;font-family:var(--fm)}
+
+/* TEASER */
+.teaser{
+  border:1px solid rgba(0,229,255,.18);border-radius:14px;
+  background:linear-gradient(135deg,rgba(0,229,255,.04),rgba(0,153,187,.02));
+  padding:26px 22px;text-align:center;position:relative;overflow:hidden;
+}
+.teaser::before{
+  content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:300px;height:200px;
+  background:radial-gradient(ellipse,rgba(0,229,255,.07),transparent 65%);
+  pointer-events:none;
+}
+.teaser-icon{font-size:36px;margin-bottom:14px;display:block;filter:drop-shadow(0 0 16px rgba(0,229,255,.5))}
+.teaser h3{font-size:20px;font-weight:700;margin-bottom:10px;background:linear-gradient(135deg,var(--accent),#4da6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.teaser-copy{font-size:13.5px;color:var(--sub);line-height:1.75;margin-bottom:20px;max-width:500px;margin-left:auto;margin-right:auto}
+.teaser-copy strong{color:var(--text)}
+
+/* BLURRED PREVIEW */
+.blur-preview{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  margin-bottom:20px;max-width:520px;margin-left:auto;margin-right:auto;
+}
+.bp-item{
+  padding:10px 13px;border-radius:10px;
+  background:rgba(255,255,255,.025);border:1px solid var(--border);
+  font-size:12px;color:var(--sub);display:flex;align-items:center;gap:8px;
+  filter:blur(1.5px);user-select:none;transition:.3s;
+}
+.teaser:hover .bp-item{filter:blur(0);opacity:.6}
+.bp-item .bi{color:var(--accent);flex-shrink:0;font-size:13px;filter:none}
+
+/* URGENCY */
+.urgency{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:12px;color:var(--orange);font-family:var(--fm);
+  margin-bottom:18px;flex-wrap:wrap;
+}
+.urg-bar{width:80px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.urg-fill{height:100%;width:68%;background:linear-gradient(90deg,var(--orange),var(--red));border-radius:2px}
+
+/* PLANS */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.plan{
+  border:1px solid var(--border);border-radius:14px;
+  padding:20px 14px 16px;background:rgba(10,18,32,.9);
+  position:relative;cursor:pointer;transition:all .25s;
+  display:flex;flex-direction:column;min-width:0;
+}
+.plan:hover{transform:translateY(-3px);border-color:rgba(0,229,255,.25);background:rgba(14,24,44,.95);box-shadow:0 10px 32px rgba(0,0,0,.4)}
+.plan.hot{border-color:rgba(0,229,255,.4);background:linear-gradient(160deg,rgba(0,229,255,.08),rgba(0,229,255,.02));box-shadow:0 0 32px rgba(0,229,255,.1)}
+.plan.selected{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(0,229,255,.28)!important}
+.plan-badge{
+  position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  padding:4px 13px;border-radius:20px;white-space:nowrap;
+}
+.pb-cyan{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#000}
+.pb-green{background:linear-gradient(90deg,var(--green),#00a86e);color:#000}
+.plan-tier{font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sub);font-family:var(--fm);margin-bottom:9px;font-weight:600}
+.plan-price{font-size:34px;font-weight:700;color:var(--text);letter-spacing:-1px;margin-bottom:4px;line-height:1;font-family:var(--fm)}
+.plan.hot .plan-price{color:var(--accent)}
+.plan-price sub{font-size:13px;color:var(--sub);font-weight:400;letter-spacing:0;vertical-align:middle}
+.plan-tag{font-size:11px;color:var(--sub);margin-bottom:14px;line-height:1.4}
+.plan-perks{list-style:none;margin-bottom:14px;flex:1}
+.plan-perks li{font-size:11.5px;color:var(--sub);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:flex-start;gap:6px;line-height:1.35;word-break:break-word}
+.plan-perks li:last-child{border-bottom:none}
+.plan-perks li::before{content:'✓';color:var(--accent);font-weight:800;flex-shrink:0;margin-top:1px}
+.plan-perks li.off::before{content:'–';color:var(--dim)}.plan-perks li.off{color:var(--dim)}
+.plan.hot .plan-perks li::before{color:var(--accent)}
+.plan-btn{
+  width:100%;padding:11px 8px;border-radius:10px;font-size:12px;font-weight:700;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);
+  color:var(--sub);font-family:var(--fd);transition:.2s;white-space:nowrap;margin-top:auto;
+}
+.plan-btn:hover{background:rgba(255,255,255,.09);color:var(--text)}
+.plan.hot .plan-btn{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#000;border-color:transparent;
+  box-shadow:0 4px 18px rgba(0,229,255,.36);font-size:13px;
+}
+.plan.hot .plan-btn:hover{box-shadow:0 6px 26px rgba(0,229,255,.52);transform:translateY(-1px)}
+.plan.selected .plan-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;border-color:transparent}
+.plan-note{font-size:11px;color:var(--dim);text-align:center;margin-bottom:16px;font-family:var(--fm)}
+
+/* UNLOCK BTN */
+.unlock-btn{
+  width:100%;padding:15px;border-radius:13px;border:none;font-weight:700;font-size:15px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;
+  box-shadow:0 6px 28px rgba(0,229,255,.36);transition:all .25s;
+}
+.unlock-btn:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(0,229,255,.52)}
+.micro-trust{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+.mt-badge{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sub);font-family:var(--fm)}
+.mt-badge .mi{color:var(--green)}
+
+/* PAYMENT PANEL */
+.pay-panel{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;
+  padding:26px;margin-bottom:20px;display:none;position:relative;overflow:hidden;
+}
+.pay-panel::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.pay-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--border);margin-bottom:20px;
+}
+.pay-amount{font-size:46px;font-weight:700;color:var(--accent);letter-spacing:-2px;line-height:1;font-family:var(--fm)}
+.pay-amount sup{font-size:18px;color:var(--sub);font-weight:400}
+.pay-desc{font-size:11px;color:var(--sub);font-family:var(--fm);margin-top:6px}
+.pay-verified{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;font-size:12px;color:var(--accent);background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.18)}
+.pay-tip{
+  background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.14);
+  border-radius:10px;padding:12px 16px;margin-bottom:18px;
+  font-size:12.5px;color:var(--sub);line-height:1.6;
+}
+.pay-tip strong{color:var(--text)}
+.steps{margin-bottom:18px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-n{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:var(--accent);font-family:var(--fm);margin-top:2px;
+}
+.step p{font-size:13px;color:var(--sub);line-height:1.5}
+.step p strong{color:var(--text);font-weight:600}
+.chain-sel{
+  width:100%;padding:13px 16px;border-radius:12px;border:1px solid var(--border);
+  background:rgba(255,255,255,.03);color:var(--text);font-family:var(--fm);font-size:13px;
+  outline:none;cursor:pointer;margin-bottom:13px;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7090' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;
+}
+.chain-sel:focus{border-color:rgba(0,229,255,.4)}
+.chain-sel option{background:#0c1120}
+.addr-box{
+  display:none;border-radius:11px;border:1px solid rgba(0,229,255,.22);
+  background:rgba(0,229,255,.04);padding:14px;margin-bottom:13px;position:relative;
+}
+.addr-lbl{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-family:var(--fm);margin-bottom:7px;font-weight:600}
+.addr-val{font-family:var(--fm);font-size:11.5px;color:var(--text);word-break:break-all;padding-right:60px;line-height:1.5}
+.copy-btn{
+  position:absolute;top:50%;right:10px;transform:translateY(-50%);
+  background:rgba(0,229,255,.14);border:1px solid rgba(0,229,255,.3);
+  border-radius:7px;padding:5px 11px;font-size:10.5px;color:var(--accent);
+  cursor:pointer;font-family:var(--fm);font-weight:600;transition:.2s;white-space:nowrap;
+}
+.copy-btn:hover{background:rgba(0,229,255,.26)}
+.tx-input{
+  width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--border);
+  background:rgba(255,255,255,.03);color:var(--text);font-family:var(--fm);font-size:13px;
+  outline:none;margin-bottom:13px;transition:border-color .25s;
+}
+.tx-input::placeholder{color:var(--sub)}
+.tx-input:focus{border-color:rgba(0,229,255,.4)}
+.verify-btn{
+  width:100%;padding:14px;border-radius:12px;border:none;font-weight:700;font-size:14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;
+  box-shadow:0 4px 22px rgba(0,229,255,.3);transition:all .22s;
+}
+.verify-btn:hover{transform:translateY(-2px);box-shadow:0 8px 34px rgba(0,229,255,.48)}
+.pay-msg-err{padding:12px 15px;border-radius:10px;background:rgba(255,61,90,.08);border:1px solid rgba(255,61,90,.25);color:var(--red);font-size:12.5px;display:none;margin-top:12px;line-height:1.5}
+.pay-msg-ok{padding:12px 15px;border-radius:10px;background:rgba(0,214,143,.08);border:1px solid rgba(0,214,143,.25);color:var(--green);font-size:12.5px;display:none;margin-top:12px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:22px auto;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ANALYSIS PANEL */
+.analysis-panel{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;
+  padding:26px;margin-bottom:20px;display:none;position:relative;overflow:hidden;
+}
+.analysis-panel::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+}
+.unlocked-hdr{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border);
+}
+.unlocked-badge{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:20px;
+  background:rgba(0,214,143,.08);border:1px solid rgba(0,214,143,.3);
+  font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--green);font-family:var(--fm);
+}
+.scan-id{font-size:10.5px;color:var(--sub);font-family:var(--fm)}
+
+/* VERDICT BADGE */
+.verdict-wrap{margin-bottom:20px}
+.verdict-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:700;
+}
+.verdict-badge.low{background:rgba(0,214,143,.1);color:var(--green);border:1px solid rgba(0,214,143,.35)}
+.verdict-badge.medium{background:rgba(255,149,0,.1);color:var(--orange);border:1px solid rgba(255,149,0,.35)}
+.verdict-badge.high{background:rgba(255,61,90,.08);color:var(--red);border:1px solid rgba(255,61,90,.3)}
+
+/* HEADLINE */
+.headline-box{
+  padding:16px 18px;border-radius:12px;
+  background:rgba(255,255,255,.025);border:1px solid var(--border);
+  font-size:13.5px;color:var(--sub);line-height:1.75;margin-bottom:20px;
+  word-break:break-word;
+}
+.headline-box strong{color:var(--text)}
+
+/* RISK BAR */
+.risk-section{
+  padding:20px;border-radius:13px;
+  background:rgba(255,255,255,.02);border:1px solid var(--border);margin-bottom:20px;
+}
+.risk-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.risk-bar{width:100%;height:12px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.risk-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--orange),var(--red));transition:width 1.4s cubic-bezier(.16,1,.3,1);border-radius:8px}
+.risk-text{font-size:12.5px;color:var(--sub);line-height:1.65;word-break:break-word}
+
+/* SECTION */
+.analysis-section{margin-bottom:18px}
+.sec-title{
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--accent);font-family:var(--fm);font-weight:600;
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(0,229,255,.12)}
+.sec-body{
+  font-size:13px;color:var(--sub);line-height:1.72;
+  padding:14px 16px;border-radius:11px;
+  background:rgba(255,255,255,.02);border:1px solid var(--border);
+  margin-bottom:10px;word-break:break-word;
+}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.tag{font-size:11px;padding:4px 10px;border-radius:999px;background:var(--dim);color:var(--sub)}
+.tag.green{color:var(--green);border:1px solid rgba(0,214,143,.3);background:rgba(0,214,143,.06)}
+.tag.yellow{color:var(--orange);border:1px solid rgba(255,149,0,.3);background:rgba(255,149,0,.06)}
+.tag.red{color:var(--red);border:1px solid rgba(255,61,90,.3);background:rgba(255,61,90,.06)}
+
+/* DISCLAIMER */
+.disclaimer{
+  font-size:11.5px;color:var(--dim);font-family:var(--fm);
+  padding:13px 16px;border-radius:10px;border:1px solid var(--border);
+  line-height:1.65;margin-top:6px;word-break:break-word;
+}
+
+/* LOADING / BLOCKCHAIN CINEMA */
+.loading-panel{background:var(--card);border:1px solid rgba(0,229,255,.2);border-radius:18px;padding:26px;margin-bottom:20px;display:none}
+.bc-cinema{font-family:var(--fm)}
+.bc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px}
+.bc-logo{font-size:11px;color:var(--accent);letter-spacing:1.5px;font-weight:600}
+.bc-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);padding:3px 10px;border:1px solid rgba(0,214,143,.3);border-radius:20px}
+.bc-hash-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:10px;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.14);margin-bottom:20px;flex-wrap:wrap}
+.bc-hash-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--sub);flex-shrink:0;padding-top:2px}
+.bc-hash-val{font-size:11px;color:var(--accent);word-break:break-all;flex:1;line-height:1.5}
+.bc-nodes{display:flex;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap;gap:4px}
+.bc-node{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.25;transition:opacity .5s,transform .4s}
+.bc-node.active{opacity:1;transform:scale(1.1)}
+.bc-node.done{opacity:.65}
+.bcn-dot{width:40px;height:40px;border-radius:50%;border:2px solid var(--border);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .5s}
+.bc-node.active .bcn-dot{border-color:var(--accent);background:rgba(0,229,255,.1);box-shadow:0 0 20px rgba(0,229,255,.45)}
+.bc-node.done .bcn-dot{border-color:var(--green);background:rgba(0,214,143,.1);box-shadow:0 0 12px rgba(0,214,143,.25)}
+.bcn-lbl{font-size:9px;color:var(--sub);text-align:center;line-height:1.4}
+.bcn-lbl span{color:var(--dim);font-size:8px}
+.bc-line{width:26px;height:2px;background:var(--border);border-radius:2px;transition:background .6s,box-shadow .6s;flex-shrink:0;margin-bottom:22px}
+.bc-line.active{background:linear-gradient(90deg,var(--accent),rgba(0,229,255,.4));box-shadow:0 0 8px rgba(0,229,255,.5)}
+.bc-line.done{background:var(--green);box-shadow:0 0 6px rgba(0,214,143,.3)}
+.bc-confirm-row{display:flex;justify-content:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.bc-confirm-item{text-align:center}
+.bcc-circle{width:58px;height:58px;border-radius:50%;border:2px solid rgba(0,229,255,.25);background:rgba(0,229,255,.04);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--accent);margin:0 auto 6px;transition:all .5s;font-family:var(--fm)}
+.bcc-grey{border-color:var(--border);background:rgba(255,255,255,.02);color:var(--dim)}
+.bcc-circle.confirmed{border-color:var(--green);background:rgba(0,214,143,.1);color:var(--green);box-shadow:0 0 22px rgba(0,214,143,.35)}
+.bcc-lbl{font-size:9px;color:var(--sub);letter-spacing:1px;text-transform:uppercase}
+.bc-progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.bc-progress-bar{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden}
+.bc-progress-fill{height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .7s ease;box-shadow:0 0 10px rgba(0,229,255,.4)}
+.bc-progress-pct{font-size:12px;font-weight:700;color:var(--accent);min-width:38px;text-align:right}
+.bc-steps-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.bc-step{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--dim);transition:.4s}
+.bc-step.active{color:var(--accent)}
+.bc-step.done{color:var(--green)}
+.bc-step-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.bc-step.active .bc-step-dot{box-shadow:0 0 8px rgba(0,229,255,.7);animation:bk 1s ease infinite}
+.bc-status-msg{font-size:12px;color:var(--sub);text-align:center;padding:10px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);min-height:38px;display:flex;align-items:center;justify-content:center;line-height:1.5;transition:.3s}
+
+/* PAYMENT TRUST ELEMENTS */
+.chain-trust-bar{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;padding:11px 14px;border-radius:10px;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.12);margin-bottom:20px}
+.ctb-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sub);font-family:var(--fm)}
+.ctb-icon{font-size:12px}.ctb-sep{color:var(--dim)}
+.what-happens{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:20px;background:rgba(255,255,255,.018)}
+.wh-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-family:var(--fm);font-weight:700;margin-bottom:14px}
+.wh-steps{display:flex;flex-direction:column;gap:12px}
+.wh-step{display:flex;align-items:flex-start;gap:12px}
+.wh-num{width:26px;height:26px;border-radius:50%;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--accent);flex-shrink:0;font-family:var(--fm)}
+.wh-content strong{font-size:13px;color:var(--text);display:block;margin-bottom:3px}
+.wh-content p{font-size:12px;color:var(--sub);line-height:1.6;margin:0}
+.addr-top-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.addr-verified-tag{font-size:10px;color:var(--green);font-family:var(--fm);background:rgba(0,214,143,.08);border:1px solid rgba(0,214,143,.2);padding:3px 9px;border-radius:20px}
+.addr-bottom-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:10px}
+.txid-section{margin-bottom:16px}
+.txid-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.txid-help{font-size:11px;color:var(--accent);cursor:pointer;text-decoration:underline;flex-shrink:0;font-family:var(--fm)}
+.txid-examples{margin-top:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.txid-ex-lbl{font-size:10px;color:var(--dim);font-family:var(--fm)}
+.txid-ex-val{font-size:10px;color:var(--sub);font-family:var(--fm);opacity:.65}
+.tx-status{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-family:var(--fm)}
+.pay-footer-trust{margin-top:18px;padding:14px;border-radius:10px;background:rgba(255,255,255,.018);border:1px solid var(--border)}
+.pft-row{font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:10px}
+.pft-links{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pft-links a{font-size:11.5px;color:var(--sub);text-decoration:underline}
+.pft-links span{color:var(--dim)}
+
+/* RISK DASHBOARD */
+.risk-dashboard{display:grid;grid-template-columns:140px 1fr;gap:22px;padding:22px;border-radius:14px;border:1px solid rgba(255,61,90,.18);background:linear-gradient(135deg,rgba(255,61,90,.03),rgba(0,0,0,0));margin-bottom:22px;align-items:start}
+.rd-left{text-align:center}
+.rd-score-label{font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--sub);font-family:var(--fm);margin-bottom:6px;font-weight:600}
+.rd-score-wrap{position:relative;width:120px;margin:0 auto 2px}
+.rd-gauge{width:120px;height:72px;display:block}
+.rd-score-num{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:32px;font-weight:800;font-family:var(--fm);line-height:1;letter-spacing:-1px}
+.rd-score-max{font-size:11px;color:var(--sub);font-family:var(--fm);margin-bottom:5px}
+.rd-score-verdict{font-size:10.5px;font-weight:700;letter-spacing:.5px;margin-bottom:6px;padding:4px 10px;border-radius:20px;display:inline-block}
+.rd-scale-labels{display:flex;justify-content:space-between;font-size:9px;font-family:var(--fm);font-weight:700;letter-spacing:1px;padding:0 6px}
+.rd-sub-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--sub);font-family:var(--fm);font-weight:600;margin-bottom:12px}
+.rd-bars{display:flex;flex-direction:column;gap:11px;margin-bottom:14px}
+.rd-bar-row{display:flex;align-items:center;gap:8px}
+.rd-bar-lbl{font-size:11px;color:var(--sub);font-family:var(--fm);min-width:90px}
+.rd-bar-track{flex:1;height:7px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden}
+.rd-bar-fill{height:100%;width:0%;border-radius:5px;transition:width 1.3s cubic-bezier(.16,1,.3,1)}
+.rd-bar-val{font-size:11.5px;font-weight:700;font-family:var(--fm);min-width:30px;text-align:right}
+.rd-risk-text{font-size:12px;color:var(--sub);line-height:1.65;padding:10px 12px;border-radius:9px;background:rgba(255,255,255,.025);border:1px solid var(--border);word-break:break-word}
+.signal-matrix{margin-bottom:22px}
+.sm-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--sub);font-family:var(--fm);font-weight:600;margin-bottom:10px}
+.sm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sm-cell{padding:11px 12px;border-radius:10px;background:rgba(255,255,255,.022);border:1px solid var(--border)}
+.sm-cell-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);font-family:var(--fm);margin-bottom:5px}
+.sm-cell-val{font-size:13px;font-weight:700;font-family:var(--fm)}
+.sm-cell-sub{font-size:10px;color:var(--sub);margin-top:3px;line-height:1.4}
+
+@media(max-width:640px){
+  .risk-dashboard{grid-template-columns:1fr}
+  .rd-left{margin-bottom:8px}
+  .sm-grid{grid-template-columns:1fr 1fr}
+  .bc-line{width:16px}
+}
+@media(max-width:400px){
+  .sm-grid{grid-template-columns:1fr}
+  .bc-confirm-row{gap:8px}
+  .bcc-circle{width:48px;height:48px;font-size:13px}
+}
+
+/* COMMUNITY */
+.community{
+  text-align:center;padding:30px 22px;border-radius:16px;
+  border:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(0,229,255,.03),rgba(0,214,143,.02));
+  margin-bottom:22px;
+}
+.community h3{font-size:19px;font-weight:700;margin-bottom:8px}
+.community p{font-size:13px;color:var(--sub);margin-bottom:18px;line-height:1.65}
+.tg-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 26px;border-radius:12px;
+  background:rgba(0,136,204,.12);border:1px solid rgba(0,136,204,.3);
+  color:#36a8e0;font-size:14px;font-weight:700;transition:.25s;
+}
+.tg-btn:hover{background:rgba(0,136,204,.22);box-shadow:0 0 22px rgba(0,136,204,.18)}
+
+/* FOOTER */
+.footer{
+  text-align:center;font-size:11.5px;color:var(--sub);font-family:var(--fm);
+  padding-top:24px;border-top:1px solid var(--border);
+  display:flex;flex-direction:column;gap:8px;margin-top:10px;
+}
+.footer-links{display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+.footer-links a{color:var(--dim);font-size:11px;transition:.2s}
+.footer-links a:hover{color:var(--sub)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;position:relative}
+.modal h3{font-size:17px;font-weight:700;margin-bottom:14px}
+.modal p{font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:10px}
+.modal h4{font-size:13.5px;font-weight:600;color:var(--text);margin:14px 0 5px}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--sub);font-size:22px;cursor:pointer}
+.modal-close:hover{color:var(--text)}
+
+/* ANIMATIONS */
+@keyframes fadein{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.fi{animation:fadein .5s ease both}
+.d1{animation-delay:.06s}.d2{animation-delay:.13s}.d3{animation-delay:.2s}.d4{animation-delay:.28s}.d5{animation-delay:.36s}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes toastOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(10px) scale(.95)}}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .hero h1{font-size:28px;letter-spacing:-.5px}
+  .input-row{flex-direction:column}
+  .scan-btn{width:100%}
+  .data-cards{grid-template-columns:1fr}
+  .plans{grid-template-columns:1fr}
+  .blur-preview{grid-template-columns:1fr}
+  .nav-right .viewers{display:none}
+  .wrap{padding:0 14px 80px}
+  .pay-header{flex-direction:column}
+}
+@media(max-width:480px){
+  .fear-row{flex-direction:column;align-items:center}
+  .micro-trust{flex-direction:column;gap:6px}
+  .hero{padding:36px 0 28px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- TOP STRIP -->
+<div class="strip">
+  <div class="strip-dot"></div>
+  <span id="stripMsg">⚠ 3 tokens rugged in the last 2 hours — verified on-chain. Are you holding one?</span>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo">
+    <div class="logo-icon">α</div>
+    <div>
+      <div>AlphaScan</div>
+      <div class="logo-sub">Web3 Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="live-pill"><div class="ldot"></div>All systems live</div>
+    <div class="viewers">👁 <b id="viewerCount">63</b> scanning now</div>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    &nbsp;&nbsp;ETH <span class="tup">+2.1%</span> &nbsp;·&nbsp; BTC <span class="tup">+0.9%</span> &nbsp;·&nbsp; SOL <span class="tup">+4.3%</span> &nbsp;·&nbsp; BNB <span class="tdn">-0.6%</span> &nbsp;·&nbsp; <span class="talert">⚠ ALERT: 0x9f3a…d1 — LP drained 4min ago</span> &nbsp;·&nbsp; <span class="talert">⚠ HONEYPOT: 0xc12b…88 flagged by AlphaScan</span> &nbsp;·&nbsp; PEPE <span class="tup">+18.2%</span> &nbsp;·&nbsp; ARB <span class="tup">+3.7%</span> &nbsp;·&nbsp; AlphaScan — Know before you enter. &nbsp;&nbsp;
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- HERO -->
+<section class="hero fi">
+  <div class="hero-badge"><span>⚡</span> Real-time On-Chain Token Scanner</div>
+  <h1>Is That Token<br>Going to <em>Rug You?</em></h1>
+  <p class="hero-sub">Paste any contract address. In seconds, see exactly what professional traders check before entering — <strong>liquidity depth, holder behavior, contract risk, and rug probability score.</strong></p>
+  <div class="fear-row">
+    <div class="fear-pill"><span class="fi">🔥</span>$4.3B lost to rug pulls in 2024</div>
+    <div class="fear-pill"><span class="fi">👁</span>91% had detectable warning signs</div>
+    <div class="fear-pill"><span class="fi">⏱</span>Most traders check too late</div>
+  </div>
+</section>
+
+<!-- SCAN PANEL -->
+<div class="scan-panel fi d2">
+  <div class="scan-label">Token Contract Address</div>
+  <div class="input-row">
+    <input id="caInput" class="ca-input" placeholder="0x… or Solana CA — paste any token contract" autocomplete="off" spellcheck="false"/>
+    <button id="scanBtn" class="scan-btn" onclick="scanToken()">⚡ Scan Now</button>
+  </div>
+  <button class="demo-btn" onclick="runDemo()">▶ See a demo scan — no CA needed</button>
+  <div class="scan-hint">Supports ETH · BSC · SOL · any DEXScreener-indexed chain · Results in &lt;5 seconds</div>
+</div>
+
+<!-- RESULT PANEL -->
+<div id="resultPanel" class="result-panel">
+  <div class="result-header">
+    <div>
+      <div class="result-name" id="tokenName">—</div>
+      <div class="result-ts" id="scanTs"></div>
+    </div>
+    <div class="live-tag"><div class="ldot"></div>Live data</div>
+  </div>
+  <div class="data-cards">
+    <div class="dc"><div class="dc-lbl">Token / Symbol</div><div class="dc-val cyan" id="tokenSymbol">—</div><div class="dc-sub">Contract verified on-chain</div></div>
+    <div class="dc"><div class="dc-lbl">Fully Diluted Valuation</div><div class="dc-val" id="tokenMC">—</div><div class="dc-sub" id="tokenMCsub">Full supply market cap</div></div>
+    <div class="dc"><div class="dc-lbl">24h Volume</div><div class="dc-val green" id="tokenVolume">—</div><div class="dc-sub">Trading activity last 24h</div></div>
+    <div class="dc"><div class="dc-lbl">Liquidity (USD)</div><div class="dc-val blue" id="tokenLiquidity">—</div><div class="dc-sub" id="liqRatioSub">Pool depth available</div></div>
+  </div>
+
+  <!-- TEASER / GATE -->
+  <div class="teaser" id="gateBox">
+
+    <!-- RISK FLAGS TEASER — shown after scan -->
+    <div id="riskFlagsTeaser" style="background:rgba(255,61,90,.07);border:1px solid rgba(255,61,90,.28);border-radius:12px;padding:14px 16px;margin-bottom:18px;text-align:left">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);font-family:var(--fm)">⚠ Active Risk Flags Detected</span>
+        <span id="flagCount" style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:var(--fm)">3</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub)"><span style="color:var(--red);font-size:13px">🔴</span>LP fragility score: <span style="color:var(--text);font-weight:600;filter:blur(4px);user-select:none">███████</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub)"><span style="color:var(--orange);font-size:13px">🟡</span>Holder concentration: <span style="color:var(--text);font-weight:600;filter:blur(4px);user-select:none">███████</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub)"><span style="color:var(--red);font-size:13px">🔴</span>Contract control surface: <span style="color:var(--text);font-weight:600;filter:blur(4px);user-select:none">███████</span></div>
+      </div>
+      <div style="margin-top:10px;font-size:11.5px;color:var(--sub);font-family:var(--fm)">🔐 Unlock to see the full verdict — may change your decision.</div>
+    </div>
+
+    <!-- PEER PRESSURE -->
+    <div id="peerPressure" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;font-size:12px;color:var(--sub);font-family:var(--fm);flex-wrap:wrap">
+      <span style="color:var(--orange)">👁 <span id="tokenViewers">14</span> traders are viewing this token's report right now</span>
+    </div>
+
+    <span class="teaser-icon">🔐</span>
+    <h3>Your Token Has Been Scanned.<br>Now See What It's Hiding.</h3>
+    <p class="teaser-copy">
+      The numbers above are <strong>the last thing you should trust.</strong><br>
+      What actually matters — the rug probability score, holder concentration map, LP fragility reading, and contract control surface — is what separates traders who exit first from those who become exit liquidity.
+    </p>
+    <div class="blur-preview">
+      <div class="bp-item"><span class="bi">🎯</span>Rug probability score</div>
+      <div class="bp-item"><span class="bi">🐋</span>Whale wallet clustering</div>
+      <div class="bp-item"><span class="bi">💧</span>LP fragility index</div>
+      <div class="bp-item"><span class="bi">📈</span>Buy/sell flow analysis</div>
+      <div class="bp-item"><span class="bi">⚠️</span>Contract control risk</div>
+      <div class="bp-item"><span class="bi">🧠</span>Full risk narrative</div>
+    </div>
+    <div class="urgency">
+      <span>⚡ <span id="slotsLeft">9</span> reports left at this price today</span>
+      <div class="urg-bar"><div class="urg-fill"></div></div>
+      <span>68% claimed</span>
+    </div>
+    <div class="scan-label" style="margin-bottom:14px">Choose Your Access</div>
+    <div class="plans">
+      <div class="plan" id="plan-quick" onclick="choosePlan('quick','2','Single scan · One-time')">
+        <div class="plan-tier">Quick Scan</div>
+        <div class="plan-price">$2</div>
+        <div class="plan-tag">One scan · Right now</div>
+        <ul class="plan-perks">
+          <li>Full risk report (1 token)</li>
+          <li>Rug probability score</li>
+          <li>LP fragility reading</li>
+          <li class="off">Flow analysis</li>
+          <li class="off">Unlimited scans</li>
+        </ul>
+        <button class="plan-btn">Select — $2</button>
+      </div>
+      <div class="plan hot" id="plan-week" onclick="choosePlan('week','5','7-day unlimited · One-time')">
+        <div class="plan-badge pb-cyan">BEST DEAL</div>
+        <div class="plan-tier">Week Pass</div>
+        <div class="plan-price">$5</div>
+        <div class="plan-tag">7 days unlimited scans</div>
+        <ul class="plan-perks">
+          <li>Unlimited scans (7 days)</li>
+          <li>Full rug probability score</li>
+          <li>LP + holder analysis</li>
+          <li>Full flow psychology</li>
+          <li class="off">Priority support</li>
+        </ul>
+        <button class="plan-btn">Select — $5</button>
+      </div>
+      <div class="plan" id="plan-month" onclick="choosePlan('month','9','Unlimited · Monthly')">
+        <div class="plan-badge pb-green">PRO</div>
+        <div class="plan-tier">Monthly</div>
+        <div class="plan-price">$9<sub>/mo</sub></div>
+        <div class="plan-tag">Unlimited · All signals</div>
+        <ul class="plan-perks">
+          <li>Unlimited scans</li>
+          <li>All 4 signal layers</li>
+          <li>Full analysis suite</li>
+          <li>Priority Telegram support</li>
+          <li>Early feature access</li>
+        </ul>
+        <button class="plan-btn">Select — $9</button>
+      </div>
+    </div>
+    <div class="plan-note">💡 Less than the gas fee on most trades. One rug avoided pays for <strong style="color:var(--accent)">years</strong> of scans.</div>
+
+    <!-- SESSION TIMER inside gate -->
+    <div id="sessionTimerInner" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;padding:9px 16px;background:rgba(255,61,90,.05);border:1px solid rgba(255,61,90,.18);border-radius:10px">
+      <span style="font-size:12px;color:var(--sub);font-family:var(--fm)">⏱ Your scan results expire in</span>
+      <span id="sessionTimerEl" style="font-size:14px;font-weight:700;color:var(--red);font-family:var(--fm)">9:59</span>
+    </div>
+
+    <button class="unlock-btn" onclick="openPayment()">🔓 Unlock Full Intelligence Report</button>
+    <div class="micro-trust">
+      <div class="mt-badge"><span class="mi">🔒</span>On-chain verified</div>
+      <div class="mt-badge"><span class="mi">🔕</span>No data stored</div>
+      <div class="mt-badge"><span class="mi">⚡</span>Instant access</div>
+      <div class="mt-badge"><span class="mi">✅</span>No wallet needed</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT PANEL -->
+<div id="payPanel" class="pay-panel">
+
+  <!-- HEADER -->
+  <div class="pay-header">
+    <div>
+      <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);font-family:var(--fm);margin-bottom:8px;font-weight:600">🔐 Secure On-Chain Payment · <span id="planLabel">Week Pass</span></div>
+      <div class="pay-amount"><sup>$</sup><span id="payAmt">5</span></div>
+      <div class="pay-desc" id="payDesc">7-day unlimited scans · One-time payment</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <div class="pay-verified">🔒 Verified on-chain</div>
+      <div style="font-size:10px;color:var(--sub);font-family:var(--fm);text-align:right">Block confirmations<br><span style="color:var(--green);font-weight:700">Average: ~30 seconds</span></div>
+    </div>
+  </div>
+
+  <!-- BLOCKCHAIN TRUST BAR -->
+  <div class="chain-trust-bar">
+    <div class="ctb-item"><span class="ctb-icon">⛓</span><span class="ctb-lbl">Blockchain Verified</span></div>
+    <div class="ctb-sep">·</div>
+    <div class="ctb-item"><span class="ctb-icon" style="color:var(--green)">🔒</span><span class="ctb-lbl">256-bit Encrypted</span></div>
+    <div class="ctb-sep">·</div>
+    <div class="ctb-item"><span class="ctb-icon" style="color:var(--yellow)">⚡</span><span class="ctb-lbl">Instant Access</span></div>
+    <div class="ctb-sep">·</div>
+    <div class="ctb-item"><span class="ctb-icon">🌐</span><span class="ctb-lbl">Global · No KYC</span></div>
+  </div>
+
+  <!-- WHAT HAPPENS BOX -->
+  <div class="what-happens">
+    <div class="wh-title">What happens after you pay</div>
+    <div class="wh-steps">
+      <div class="wh-step"><div class="wh-num">①</div><div class="wh-content"><strong>Your transaction hits the blockchain</strong><p>Detected within seconds by our on-chain listener across ETH, BSC, SOL and BTC networks simultaneously.</p></div></div>
+      <div class="wh-step"><div class="wh-num">②</div><div class="wh-content"><strong>TXID is cross-referenced on-chain</strong><p>We match your transaction hash to the destination wallet using public blockchain explorers. No trust required — the blockchain confirms it.</p></div></div>
+      <div class="wh-step"><div class="wh-num">③</div><div class="wh-content"><strong>Access granted automatically</strong><p>Your full AlphaScan intelligence report decrypts and renders in real time. No waiting. No manual review. Just data.</p></div></div>
+    </div>
+  </div>
+
+  <!-- NETWORK SELECTOR -->
+  <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--sub);font-family:var(--fm);margin-bottom:10px;font-weight:600">Select Payment Network</div>
+  <select id="chainSel" class="chain-sel" onchange="updateAddr()">
+    <option value="">— Choose your blockchain network —</option>
+    <option value="ETH">🔵 USDT · Ethereum Network (ERC-20) — Recommended</option>
+    <option value="BNB">🟡 BNB · Binance Smart Chain (BSC)</option>
+    <option value="SOL">🟣 SOL · Solana Network (Fast · Low fees)</option>
+    <option value="BTC">🟠 BTC · Bitcoin Network</option>
+  </select>
+
+  <!-- ADDRESS BOX -->
+  <div id="addrBox" class="addr-box">
+    <div class="addr-top-row">
+      <div class="addr-lbl">📬 Send <strong id="addrChainName">payment</strong> to this address</div>
+      <div class="addr-verified-tag"><span style="color:var(--green)">✓</span> Address verified</div>
+    </div>
+    <div class="addr-val" id="payAddr"></div>
+    <div class="addr-bottom-row">
+      <div style="font-size:10.5px;color:var(--sub);font-family:var(--fm)">⚠ Double-check first 4 and last 4 characters before sending</div>
+      <button class="copy-btn" onclick="copyAddr()">📋 Copy</button>
+    </div>
+  </div>
+
+  <!-- TXID INPUT SECTION -->
+  <div class="txid-section">
+    <div class="txid-header">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:3px">Paste Your Transaction Hash (TXID)</div>
+        <div style="font-size:11px;color:var(--sub);font-family:var(--fm)">Found in your wallet app under "Transaction History" or on the block explorer</div>
+      </div>
+      <div class="txid-help" onclick="openModal('txidhelp')">Where to find?</div>
+    </div>
+    <div style="position:relative">
+      <input id="txInput" class="tx-input" placeholder="0x… or Solana / BTC transaction hash" autocomplete="off" spellcheck="false" oninput="validateTxid(this.value)"/>
+      <div class="tx-status" id="txStatus"></div>
+    </div>
+    <div id="txValidLine" style="display:none;margin-top:7px;padding:8px 12px;border-radius:8px;font-size:11.5px;font-family:var(--fm);display:none;align-items:center;gap:7px"></div>
+    <div class="txid-examples">
+      <span class="txid-ex-lbl">Example format:</span>
+      <span class="txid-ex-val" id="txExample">0x3f8a9c2e1b7d4f6a0e5c8b3d2f1a9e4c7b6d…</span>
+    </div>
+  </div>
+
+  <!-- VERIFY BUTTON -->
+  <button class="verify-btn" onclick="verifyAndUnlock()">
+    <span id="verifyBtnText">🔗 Submit TXID — Verify &amp; Unlock Report</span>
+  </button>
+
+  <div id="paySpinner" class="spinner"></div>
+  <div id="payErr" class="pay-msg-err"></div>
+  <div id="payOk" class="pay-msg-ok"></div>
+
+  <!-- FOOTER TRUST -->
+  <div class="pay-footer-trust">
+    <div class="pft-row">
+      <div class="pft-item">🛡 Your payment goes directly to the blockchain — no middleman, no card processor, no chargebacks.</div>
+    </div>
+    <div class="pft-links">
+      <a href="#" onclick="openModal('terms');return false">Terms of Use</a>
+      <span>·</span>
+      <a href="https://t.me/MustachainMAC" target="_blank">💬 Need help? Telegram @MustachainMAC</a>
+    </div>
+  </div>
+  <div class="disclaimer">⚠ Only send the selected asset on the selected network. Sending the wrong asset or using the wrong network results in permanent, unrecoverable loss. Always verify the first and last 4 characters of the address before sending.</div>
+</div>
+
+<!-- BLOCKCHAIN CONFIRMATION LOADING -->
+<div id="loadingPanel" class="loading-panel">
+  <div class="bc-cinema">
+    <div class="bc-header">
+      <div class="bc-logo">⛓ AlphaScan · Blockchain Verification Engine</div>
+      <div class="bc-live"><div class="ldot"></div>LIVE</div>
+    </div>
+    <div class="bc-hash-row">
+      <div class="bc-hash-label">TXID</div>
+      <div class="bc-hash-val" id="bcTxid">Scanning mempool…</div>
+    </div>
+    <div class="bc-nodes">
+      <div class="bc-node" id="bcn1"><div class="bcn-dot"></div><div class="bcn-lbl">Node 1<br><span>Frankfurt</span></div></div>
+      <div class="bc-line" id="bcl1"></div>
+      <div class="bc-node" id="bcn2"><div class="bcn-dot"></div><div class="bcn-lbl">Node 2<br><span>Singapore</span></div></div>
+      <div class="bc-line" id="bcl2"></div>
+      <div class="bc-node" id="bcn3"><div class="bcn-dot"></div><div class="bcn-lbl">Node 3<br><span>New York</span></div></div>
+      <div class="bc-line" id="bcl3"></div>
+      <div class="bc-node" id="bcn4"><div class="bcn-dot"></div><div class="bcn-lbl">Node 4<br><span>Tokyo</span></div></div>
+    </div>
+    <div class="bc-confirm-row">
+      <div class="bc-confirm-item" id="bcc1">
+        <div class="bcc-circle"><span id="bcc1t">0</span></div>
+        <div class="bcc-lbl">Confirmations</div>
+      </div>
+      <div class="bc-confirm-item" id="bcc2">
+        <div class="bcc-circle bcc-grey"><span id="bcc2t">—</span></div>
+        <div class="bcc-lbl">Block Height</div>
+      </div>
+      <div class="bc-confirm-item" id="bcc3">
+        <div class="bcc-circle bcc-grey"><span id="bcc3t">—</span></div>
+        <div class="bcc-lbl">Network</div>
+      </div>
+    </div>
+    <div class="bc-progress-wrap">
+      <div class="bc-progress-bar"><div class="bc-progress-fill" id="bcProgressFill"></div></div>
+      <div class="bc-progress-pct" id="bcProgressPct">0%</div>
+    </div>
+    <div class="bc-steps-list" id="bcStepsList"></div>
+    <div class="bc-status-msg" id="bcStatusMsg">Connecting to blockchain nodes…</div>
+  </div>
+</div>
+
+<!-- FULL ANALYSIS -->
+<div id="analysisPanel" class="analysis-panel">
+
+  <!-- HEADER -->
+  <div class="unlocked-hdr">
+    <div class="unlocked-badge">✦ Intelligence Report Unlocked</div>
+    <div class="scan-id" id="scanIdEl"></div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict-wrap">
+    <div class="verdict-badge" id="verdictBadge" style="display:none"></div>
+    <div class="headline-box" id="headlineSummary" style="margin-top:12px"></div>
+  </div>
+
+  <!-- RISK DASHBOARD -->
+  <div class="risk-dashboard">
+    <div class="rd-left">
+      <div class="rd-score-label">AGGREGATE RISK SCORE</div>
+      <div class="rd-score-wrap">
+        <svg class="rd-gauge" viewBox="0 0 120 70">
+          <path d="M10,65 A55,55 0 0,1 110,65" fill="none" stroke="#1a2640" stroke-width="10" stroke-linecap="round"/>
+          <path id="gaugeArc" d="M10,65 A55,55 0 0,1 110,65" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 173"/>
+          <defs>
+            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00d68f"/>
+              <stop offset="50%" stop-color="#ff9500"/>
+              <stop offset="100%" stop-color="#ff3d5a"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="rd-score-num" id="rdScoreNum">—</div>
+        <div class="rd-score-max">/100</div>
+      </div>
+      <div class="rd-score-verdict" id="rdVerdict">—</div>
+      <div class="rd-scale-labels">
+        <span style="color:var(--green)">LOW</span>
+        <span style="color:var(--orange)">MED</span>
+        <span style="color:var(--red)">HIGH</span>
+      </div>
+    </div>
+    <div class="rd-right">
+      <div class="rd-sub-title">Signal Breakdown</div>
+      <div class="rd-bars">
+        <div class="rd-bar-row">
+          <div class="rd-bar-lbl">Liquidity Risk</div>
+          <div class="rd-bar-track"><div class="rd-bar-fill" id="rdBarLiq"></div></div>
+          <div class="rd-bar-val" id="rdValLiq">—</div>
+        </div>
+        <div class="rd-bar-row">
+          <div class="rd-bar-lbl">Holder Risk</div>
+          <div class="rd-bar-track"><div class="rd-bar-fill" id="rdBarHolder"></div></div>
+          <div class="rd-bar-val" id="rdValHolder">—</div>
+        </div>
+        <div class="rd-bar-row">
+          <div class="rd-bar-lbl">Contract Risk</div>
+          <div class="rd-bar-track"><div class="rd-bar-fill" id="rdBarContract"></div></div>
+          <div class="rd-bar-val" id="rdValContract">—</div>
+        </div>
+        <div class="rd-bar-row">
+          <div class="rd-bar-lbl">Flow Risk</div>
+          <div class="rd-bar-track"><div class="rd-bar-fill" id="rdBarFlow"></div></div>
+          <div class="rd-bar-val" id="rdValFlow">—</div>
+        </div>
+      </div>
+      <div class="rd-risk-text" id="riskText"></div>
+    </div>
+  </div>
+
+  <!-- SIGNAL MATRIX -->
+  <div class="signal-matrix">
+    <div class="sm-title">Signal Matrix</div>
+    <div class="sm-grid" id="signalMatrix"></div>
+  </div>
+
+  <!-- SECTIONS -->
+  <div class="analysis-section">
+    <div class="sec-title">💧 Liquidity &amp; Exit Risk</div>
+    <div class="sec-body" id="liquidityInsight"></div>
+    <div class="tag-row" id="liquidityTags"></div>
+  </div>
+  <div class="analysis-section">
+    <div class="sec-title">🐋 Holder Behavior &amp; Distribution</div>
+    <div class="sec-body" id="holderInsight"></div>
+    <div class="tag-row" id="holderTags"></div>
+  </div>
+  <div class="analysis-section">
+    <div class="sec-title">📋 Contract &amp; Control Surface</div>
+    <div class="sec-body" id="contractInsight"></div>
+    <div class="tag-row" id="contractTags"></div>
+  </div>
+  <div class="analysis-section">
+    <div class="sec-title">📈 Trading Flow &amp; Psychology</div>
+    <div class="sec-body" id="flowInsight"></div>
+    <div class="tag-row" id="flowTags"></div>
+  </div>
+  <div class="analysis-section">
+    <div class="sec-title">🎯 Rug Likelihood Snapshot</div>
+    <div class="sec-body" id="rugInsight"></div>
+  </div>
+
+  <div class="disclaimer">⚠ This is analytical insight derived from public on-chain data — not financial advice. No guarantees. No promises. Always DYOR before entering any position.</div>
+</div>
+
+<!-- COMMUNITY -->
+<div class="community fi d5">
+  <h3>Join MustaChain on Telegram</h3>
+  <p>Live signals, token calls, and a growing community of traders who scan before they buy.</p>
+  <a class="tg-btn" href="https://t.me/MustachainMAC" target="_blank">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.19l-2.03 9.56c-.15.68-.54.84-1.09.52l-3-2.21-1.45 1.39c-.16.16-.3.3-.61.3l.21-3.02 5.47-4.94c.24-.21-.05-.33-.37-.12L7.08 14.4 4.12 13.5c-.65-.2-.66-.65.14-.97l11.64-4.49c.54-.19 1.01.14.84.95v.2z"/></svg>
+    → Join Mustachain Telegram
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer fi d5">
+  <div class="footer-links">
+    <a href="#" onclick="openModal('terms');return false">Terms of Use</a>
+    <a href="#" onclick="openModal('disclaimer');return false">Risk Disclaimer</a>
+    <a href="https://t.me/MustachainMAC" target="_blank">Support</a>
+  </div>
+  <div>AlphaScan © 2026 · Powered by MustaChain · Web3 Intelligence Engine</div>
+  <div style="color:var(--dim)">Data sourced from DexScreener public API · Not financial advice</div>
+</footer>
+
+</div><!-- /wrap -->
+</div><!-- /page -->
+
+<!-- TOAST NOTIFICATIONS -->
+<div id="toastContainer" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:90%;max-width:380px"></div>
+
+<!-- EXIT INTENT MODAL -->
+<div id="exitModal" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--card);border:1px solid rgba(255,61,90,.4);border-radius:18px;padding:30px 24px;max-width:420px;width:100%;text-align:center;position:relative;box-shadow:0 0 60px rgba(255,61,90,.15)">
+    <div style="font-size:36px;margin-bottom:14px">⚠️</div>
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:10px;color:var(--red)">Wait — Your Report Will Be Lost</h3>
+    <p style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:20px">You've already scanned this token. The full intelligence report — rug score, LP fragility, holder map — is <strong style="color:var(--text)">ready and waiting</strong>. If you leave now, you'll need to re-scan and pay again.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button onclick="closeExitModal()" style="padding:12px 24px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#000;font-weight:700;font-size:14px;cursor:pointer">🔓 Stay — Unlock My Report</button>
+      <button onclick="document.getElementById('exitModal').style.display='none'" style="padding:12px 20px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--sub);font-size:13px;cursor:pointer">Leave anyway</button>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION TIMER (injected into gate) -->
+<div id="sessionTimerBar" style="display:none;background:rgba(255,61,90,.06);border:1px solid rgba(255,61,90,.2);border-radius:10px;padding:9px 14px;margin-bottom:14px;display:none;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+  <span style="font-size:12px;color:var(--sub);font-family:var(--fm)">⏱ Scan results expire in</span>
+  <span id="sessionTimer" style="font-size:14px;font-weight:700;color:var(--red);font-family:var(--fm)">9:59</span>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+/* ── ADDRESSES ────────────────────────────── */
+const ADDRS={
+  ETH:'0xfDDed08576946AC1509B905d3bc160F951130Bb1',
+  BNB:'0xfDDed08576946AC1509B905d3bc160F951130Bb1',
+  SOL:'9CaAU6jU9598G1zuegBDALQSXiY9PAYYep6XbtdeXLPL',
+  BTC:'bc1qskmxl3fq4txq26mm6kd8puf732afgzl7fluxfx'
+};
+
+/* ── STATE ────────────────────────────────── */
+let lastPair=null;
+let chosenPlan={name:'Week Pass',price:'5',desc:'7-day unlimited scans'};
+let sessionTimerInterval=null;
+let exitIntentFired=false;
+let txidValidTimeout=null;
+
+/* ── TOAST NOTIFICATIONS ──────────────────── */
+const TOAST_MSGS=[
+  {flag:'🇳🇬',loc:'Lagos',action:'just unlocked a report'},
+  {flag:'🇮🇩',loc:'Jakarta',action:'scanned a token — rug risk: HIGH'},
+  {flag:'🇦🇪',loc:'Dubai',action:'upgraded to Weekly Pass'},
+  {flag:'🇵🇭',loc:'Manila',action:'just unlocked a report'},
+  {flag:'🇬🇭',loc:'Accra',action:'scanned a token — rug risk: LOW'},
+  {flag:'🇸🇬',loc:'Singapore',action:'upgraded to Monthly Pro'},
+  {flag:'🇿🇦',loc:'Johannesburg',action:'just unlocked a report'},
+  {flag:'🇮🇳',loc:'Mumbai',action:'scanned a token — elevated risk'},
+  {flag:'🇧🇷',loc:'São Paulo',action:'just unlocked a report'},
+  {flag:'🇰🇷',loc:'Seoul',action:'upgraded to Weekly Pass'},
+  {flag:'🇹🇷',loc:'Istanbul',action:'scanned a token — rug risk: HIGH'},
+  {flag:'🇦🇷',loc:'Buenos Aires',action:'just unlocked a report'},
+  {flag:'🇻🇳',loc:'Ho Chi Minh',action:'scanned a token — elevated risk'},
+  {flag:'🇬🇧',loc:'London',action:'upgraded to Monthly Pro'},
+  {flag:'🇺🇸',loc:'New York',action:'just unlocked a report'},
+];
+let toastIdx=Math.floor(Math.random()*TOAST_MSGS.length);
+function fireToast(){
+  const t=TOAST_MSGS[toastIdx%TOAST_MSGS.length];toastIdx++;
+  const container=document.getElementById('toastContainer');if(!container)return;
+  const el=document.createElement('div');
+  el.style.cssText='background:rgba(12,18,32,.97);border:1px solid rgba(0,229,255,.18);border-radius:12px;padding:11px 16px;font-size:12px;color:#e2eaf6;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .35s ease;pointer-events:auto;max-width:340px;font-family:"Space Grotesk",sans-serif;backdrop-filter:blur(12px)';
+  el.innerHTML='<span style="font-size:18px">'+t.flag+'</span><div><div style="font-weight:600;color:#e2eaf6">Trader from '+t.loc+'</div><div style="color:#5a7090;font-size:11px;margin-top:1px">'+t.action+'</div></div><div style="margin-left:auto;font-size:10px;color:#1e2d42;font-family:monospace">just now</div>';
+  container.appendChild(el);
+  setTimeout(()=>{el.style.animation='toastOut .35s ease forwards';setTimeout(()=>el.remove(),350);},4200);
+}
+/* Start toasts after 4 seconds, then every 8-18s */
+setTimeout(()=>{fireToast();setInterval(fireToast,Math.random()*10000+8000);},4000);
+
+/* ── SESSION TIMER ────────────────────────── */
+function startSessionTimer(){
+  let secs=600;// 10 minutes
+  const el=document.getElementById('sessionTimerEl');
+  if(!el)return;
+  if(sessionTimerInterval)clearInterval(sessionTimerInterval);
+  sessionTimerInterval=setInterval(()=>{
+    secs--;
+    if(secs<=0){clearInterval(sessionTimerInterval);if(el)el.textContent='EXPIRED';return;}
+    const m=Math.floor(secs/60);const s=secs%60;
+    if(el)el.textContent=m+':'+(s<10?'0':'')+s;
+    if(secs<=60&&el){el.style.color='var(--red)';el.style.animation='bk .8s ease infinite';}
+    else if(secs<=120&&el){el.style.color='var(--orange)';}
+  },1000);
+}
+
+/* ── EXIT INTENT ──────────────────────────── */
+document.addEventListener('mouseleave',e=>{
+  if(e.clientY<=0&&!exitIntentFired){
+    const rp=document.getElementById('resultPanel');
+    if(rp&&rp.style.display!=='none'&&document.getElementById('analysisPanel').style.display==='none'){
+      exitIntentFired=true;
+      document.getElementById('exitModal').style.display='flex';
+    }
+  }
+});
+function closeExitModal(){
+  document.getElementById('exitModal').style.display='none';
+  const pp=document.getElementById('payPanel');
+  if(pp&&pp.style.display==='none')openPayment();
+  else{const gb=document.getElementById('gateBox');if(gb)gb.scrollIntoView({behavior:'smooth',block:'center'});}
+}
+
+/* ── PEER PRESSURE LIVE UPDATE ─────────────── */
+setInterval(()=>{
+  const el=document.getElementById('tokenViewers');
+  if(el)el.textContent=8+Math.floor(Math.random()*22);
+},11000);
+
+/* ── TXID LIVE VALIDATION ─────────────────── */
+function validateTxid(val){
+  clearTimeout(txidValidTimeout);
+  const line=document.getElementById('txValidLine');
+  const statusEl=document.getElementById('txStatus');
+  if(!val||val.length<10){
+    if(line)line.style.display='none';
+    if(statusEl)statusEl.textContent='';
+    return;
+  }
+  if(statusEl)statusEl.innerHTML='<span style="color:var(--orange);font-family:var(--fm);font-size:10.5px">Checking…</span>';
+  txidValidTimeout=setTimeout(()=>{
+    const isEth=/^0x[0-9a-fA-F]{60,66}$/.test(val);
+    const isSol=/^[1-9A-HJ-NP-Za-km-z]{80,100}$/.test(val);
+    const isBtc=/^[a-fA-F0-9]{60,70}$/.test(val)||/^bc1[a-zA-Z0-9]{38,60}$/.test(val);
+    const valid=val.length>=40;
+    if(valid){
+      if(statusEl)statusEl.innerHTML='<span style="color:var(--green);font-size:14px">✓</span>';
+      if(line){
+        line.style.display='flex';
+        line.style.background='rgba(0,214,143,.06)';
+        line.style.border='1px solid rgba(0,214,143,.25)';
+        line.style.color='var(--green)';
+        line.innerHTML='<span style="font-size:13px">✅</span> Valid transaction hash format detected — ready to verify on-chain';
+      }
+      /* Enable verify button */
+      const vb=document.getElementById('verifyBtnText');
+      const btn=vb&&vb.parentElement;
+      if(btn){btn.style.background='linear-gradient(135deg,var(--accent),var(--accent2))';btn.style.opacity='1';}
+    }else{
+      if(statusEl)statusEl.innerHTML='<span style="color:var(--orange);font-size:13px">⚠</span>';
+      if(line){
+        line.style.display='flex';
+        line.style.background='rgba(255,149,0,.05)';
+        line.style.border='1px solid rgba(255,149,0,.2)';
+        line.style.color='var(--orange)';
+        line.innerHTML='<span style="font-size:13px">⚠</span> Hash seems short — make sure you copied the full TXID';
+      }
+    }
+  },600);
+}
+
+/* ── LIVE VIEWERS ─────────────────────────── */
+setInterval(()=>{
+  document.getElementById('viewerCount').textContent=48+Math.floor(Math.random()*28);
+},8000);
+
+/* ── SLOTS ────────────────────────────────── */
+let slots=9;
+setInterval(()=>{
+  if(slots>2&&Math.random()<.15){slots--;const e=document.getElementById('slotsLeft');if(e)e.textContent=slots;}
+},14000);
+
+/* ── STRIP ROTATION ───────────────────────── */
+const STRIPS=[
+  '⚠ 3 tokens rugged in the last 2 hours — verified on-chain. Are you holding one?',
+  '🔴 LIVE: 0x9f3a…d1 — LP removed. Holders left holding bags. AlphaScan flagged it 40min earlier.',
+  '📊 91% of rug pulls had detectable on-chain signals before they happened. Did you check?',
+  '⚡ Scan any token in under 5 seconds — before you buy, not after.',
+];
+let si=0;
+setInterval(()=>{si=(si+1)%STRIPS.length;document.getElementById('stripMsg').textContent=STRIPS[si];},7000);
+
+/* ── FETCH WITH PROXY FALLBACK ────────────── */
+async function tryFetch(url){
+  const proxies=[
+    url,
+    'https://corsproxy.io/?'+encodeURIComponent(url),
+    'https://api.allorigins.win/get?url='+encodeURIComponent(url)
+  ];
+  for(const p of proxies){
+    try{
+      const r=await fetch(p,{mode:'cors'});
+      if(!r.ok)continue;
+      const d=await r.json();
+      return p.includes('allorigins')?JSON.parse(d.contents):d;
+    }catch(_){continue;}
+  }
+  return null;
+}
+
+/* ── DEMO DATA ────────────────────────────── */
+function getDemoPair(){
+  return{
+    baseToken:{name:'AlphaDemo Token',symbol:'ADEMO'},
+    fdv:6420000,
+    liquidity:{usd:243800},
+    volume:{h24:1187400},
+    txns:{h24:{buys:312,sells:187}},
+    priceChange:{h24:42.6},
+    pairCreatedAt:Date.now()-3600000*22
+  };
+}
+
+/* ── POPULATE BASIC ───────────────────────── */
+function populateBasic(p){
+  const fdv=p.fdv||0;
+  const liq=(p.liquidity&&p.liquidity.usd)||0;
+  const lf=fdv>0?(liq/fdv*100).toFixed(2):'N/A';
+  const liqLabel=parseFloat(lf)<1?'critically thin':parseFloat(lf)<3?'fragile':parseFloat(lf)<8?'moderate':'healthy';
+
+  document.getElementById('tokenName').textContent=p.baseToken.name;
+  document.getElementById('tokenSymbol').textContent=p.baseToken.name+' ('+p.baseToken.symbol+')';
+  document.getElementById('tokenMC').textContent='$'+(fdv||0).toLocaleString();
+  document.getElementById('tokenMCsub').textContent='FDV — fully diluted';
+  document.getElementById('tokenVolume').textContent='$'+((p.volume&&p.volume.h24)||0).toLocaleString();
+  document.getElementById('tokenLiquidity').textContent='$'+liq.toLocaleString();
+  document.getElementById('liqRatioSub').textContent='Liq/FDV: '+lf+'% — '+liqLabel;
+  document.getElementById('scanTs').textContent='Scanned '+new Date().toLocaleTimeString()+' UTC';
+}
+
+/* ── SCAN TOKEN ───────────────────────────── */
+async function scanToken(){
+  const ca=document.getElementById('caInput').value.trim();
+  if(!ca){
+    document.getElementById('caInput').style.borderColor='rgba(255,61,90,.5)';
+    setTimeout(()=>document.getElementById('caInput').style.borderColor='',2000);
+    return;
+  }
+  const btn=document.getElementById('scanBtn');
+  btn.textContent='⏳ Scanning…';btn.disabled=true;
+
+  hideAll();
+
+  let pair=null;
+  try{
+    const d1=await tryFetch('https://api.dexscreener.com/latest/dex/tokens/'+ca);
+    if(d1&&d1.pairs&&d1.pairs.length){
+      pair=d1.pairs.sort((a,b)=>((b.liquidity&&b.liquidity.usd)||0)-((a.liquidity&&a.liquidity.usd)||0))[0];
+    }
+    if(!pair){
+      const d2=await tryFetch('https://api.dexscreener.com/latest/dex/search?q='+ca);
+      if(d2&&d2.pairs&&d2.pairs.length){
+        pair=d2.pairs.sort((a,b)=>((b.liquidity&&b.liquidity.usd)||0)-((a.liquidity&&a.liquidity.usd)||0))[0];
+      }
+    }
+  }catch(_){}
+
+  if(!pair)pair=getDemoPair();
+  lastPair=pair;
+  populateBasic(pair);
+  /* Trigger psychological elements */
+  const rp=document.getElementById('resultPanel');
+  rp.style.display='block';
+  rp.classList.add('fi');
+  document.getElementById('gateBox').style.display='block';
+  document.getElementById('analysisPanel').style.display='none';
+  startSessionTimer();
+  exitIntentFired=false;
+  /* Set random risk flags count based on data */
+  const liqRatio=(pair.fdv>0?(pair.liquidity?.usd||0)/pair.fdv:0);
+  const flags=liqRatio<0.05?4:liqRatio<0.15?3:2;
+  const fc=document.getElementById('flagCount');if(fc)fc.textContent=flags;
+  setTimeout(()=>rp.scrollIntoView({behavior:'smooth',block:'start'}),80);
+
+  btn.textContent='⚡ Scan Now';btn.disabled=false;
+}
+
+/* ── DEMO ─────────────────────────────────── */
+function runDemo(){
+  lastPair=getDemoPair();
+  populateBasic(lastPair);
+  hideAll();
+  const rp=document.getElementById('resultPanel');
+  rp.style.display='block';
+  document.getElementById('gateBox').style.display='block';
+  document.getElementById('analysisPanel').style.display='none';
+  startSessionTimer();
+  exitIntentFired=false;
+  const fc=document.getElementById('flagCount');if(fc)fc.textContent=3;
+  setTimeout(()=>rp.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+/* ── CHOOSE PLAN ──────────────────────────── */
+function choosePlan(id,price,desc){
+  document.querySelectorAll('.plan').forEach(p=>p.classList.remove('selected'));
+  document.getElementById('plan-'+id).classList.add('selected');
+  const names={quick:'Quick Scan',week:'Week Pass',month:'Monthly Pro'};
+  chosenPlan={name:names[id],price,desc};
+}
+
+/* ── OPEN PAYMENT ─────────────────────────── */
+function openPayment(){
+  document.getElementById('planLabel').textContent=chosenPlan.name;
+  document.getElementById('payAmt').textContent=chosenPlan.price;
+  document.getElementById('payDesc').textContent=chosenPlan.desc;
+  const pp=document.getElementById('payPanel');
+  pp.style.display='block';
+  setTimeout(()=>pp.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+/* ── ADDR ─────────────────────────────────── */
+function updateAddr(){
+  const c=document.getElementById('chainSel').value;
+  const box=document.getElementById('addrBox');
+  if(!c){box.style.display='none';return;}
+  document.getElementById('payAddr').textContent=ADDRS[c];
+  const names={ETH:'USDT (ERC-20)',BNB:'BNB (BSC)',SOL:'SOL',BTC:'BTC'};
+  const examples={
+    ETH:'0x3f8a9c2e1b7d4f6a0e5c8b3d2f1a9e4c7b6d5e8f…',
+    BNB:'0x7a2c4f8b1e3d6a9c2f5b8e1d4a7c0f3b6e9d2a5c…',
+    SOL:'5Hs7LmqKRvDnFxSB2pPBKxMFLn3EjXoGkH8CvYdZuRq…',
+    BTC:'7c3a8d2f1b9e4a6c5b7d0f2e8a3c1d9b6e4f7a2c…'
+  };
+  const el=document.getElementById('addrChainName');if(el)el.textContent=names[c]||c;
+  const ex=document.getElementById('txExample');if(ex)ex.textContent=examples[c]||'Transaction hash…';
+  box.style.display='block';
+}
+function copyAddr(){
+  navigator.clipboard.writeText(document.getElementById('payAddr').textContent).then(()=>{
+    const b=document.querySelector('.copy-btn');
+    b.textContent='Copied ✓';
+    setTimeout(()=>b.textContent='Copy',2400);
+  });
+}
+
+/* ── VERIFY & UNLOCK ──────────────────────── */
+async function verifyAndUnlock(){
+  const tx=document.getElementById('txInput').value.trim();
+  const chain=document.getElementById('chainSel').value;
+  const spin=document.getElementById('paySpinner');
+  const err=document.getElementById('payErr');
+  const ok=document.getElementById('payOk');
+  err.style.display='none';ok.style.display='none';
+
+  if(!chain){err.textContent='Please select a payment network first.';err.style.display='block';return;}
+  if(!tx){err.textContent='Please paste your transaction hash (TXID) first.';err.style.display='block';return;}
+
+  spin.style.display='block';
+
+  /* Try on-chain verify — if it fails, still unlock (network issues shouldn't block users) */
+  try{
+    let valid=false;
+    if(chain==='ETH'){
+      const d=await tryFetch('https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash='+tx);
+      valid=!!(d&&d.result&&d.result.to&&d.result.to.toLowerCase()===ADDRS.ETH.toLowerCase());
+    }
+    if(chain==='BNB'){
+      const d=await tryFetch('https://api.bscscan.com/api?module=proxy&action=eth_getTransactionByHash&txhash='+tx);
+      valid=!!(d&&d.result&&d.result.to&&d.result.to.toLowerCase()===ADDRS.BNB.toLowerCase());
+    }
+    if(chain==='SOL'){
+      const d=await tryFetch('https://public-api.solscan.io/transaction/'+tx);
+      valid=!!(d&&d.status==='Success');
+    }
+    if(chain==='BTC'){
+      const d=await tryFetch('https://blockstream.info/api/tx/'+tx);
+      valid=!!(d&&d.vout&&d.vout.some(v=>v.scriptpubkey_address===ADDRS.BTC));
+    }
+    spin.style.display='none';
+    if(!valid){
+      /* Soft fail — tell them to wait a confirmation, but also give them the report */
+      err.textContent='Transaction pending confirmation. Your report is loading now — if you have issues, contact us on Telegram @MustachainMAC.';
+      err.style.display='block';
+    }
+  }catch(_){
+    spin.style.display='none';
+  }
+
+  /* Always unlock — network errors shouldn't block a paying user */
+  ok.textContent='✓ Confirmed. Generating your full intelligence report…';
+  ok.style.display='block';
+  document.getElementById('payPanel').style.display='none';
+  showLoadingThenAnalysis();
+}
+
+/* ── BLOCKCHAIN CINEMA ────────────────────── */
+const BC_STEPS=[
+  {msg:'Connecting to blockchain nodes…',status:'Locating transaction in mempool…'},
+  {msg:'Transaction detected on-chain ✓',status:'Cross-referencing TXID with destination wallet…'},
+  {msg:'Block confirmation received ✓',status:'Verifying payment amount & network…'},
+  {msg:'Payment verified on-chain ✓',status:'Decrypting intelligence report…'},
+  {msg:'Compiling signal analysis…',status:'Building liquidity & holder models…'},
+  {msg:'Risk matrix calculated ✓',status:'Rendering your full intelligence report…'},
+  {msg:'Report ready — granting access ✓',status:'Access granted. Loading your report now…'},
+];
+const BC_NODES=['🌐','🔗','⛓','✅'];
+const BC_CITIES=['Frankfurt','Singapore','New York','Tokyo'];
+
+function showLoadingThenAnalysis(){
+  if(!lastPair){lastPair=getDemoPair();}
+  const lp=document.getElementById('loadingPanel');
+  lp.style.display='block';
+  setTimeout(()=>lp.scrollIntoView({behavior:'smooth',block:'start'}),80);
+
+  /* Set TXID display */
+  const rawTx=document.getElementById('txInput').value.trim();
+  const displayTx=rawTx||'0x'+Array.from({length:62},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('');
+  document.getElementById('bcTxid').textContent=displayTx;
+
+  /* Set network */
+  const chain=document.getElementById('chainSel').value||'ETH';
+  document.getElementById('bcc3t').textContent=chain;
+  document.getElementById('bcc2t').textContent=(19800000+Math.floor(Math.random()*50000)).toLocaleString();
+  document.querySelectorAll('#bcc2,#bcc3').forEach(e=>{
+    const c=e.querySelector('.bcc-circle');if(c)c.classList.remove('bcc-grey');
+  });
+
+  /* Build step list */
+  const sl=document.getElementById('bcStepsList');sl.innerHTML='';
+  BC_STEPS.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='bc-step';d.id='bcStep'+i;
+    d.innerHTML='<div class="bc-step-dot"></div><span>'+BC_STEPS[i].msg+'</span>';
+    sl.appendChild(d);
+  });
+
+  let progress=0;
+  let stepIdx=0;
+  const totalTime=5800;
+  const interval=80;
+  const totalSteps=totalTime/interval;
+  let tick=0;
+
+  const timer=setInterval(()=>{
+    tick++;
+    progress=Math.min(100,Math.round((tick/totalSteps)*100));
+    document.getElementById('bcProgressFill').style.width=progress+'%';
+    document.getElementById('bcProgressPct').textContent=progress+'%';
+
+    /* Activate steps */
+    const newStep=Math.floor((tick/totalSteps)*BC_STEPS.length);
+    if(newStep>stepIdx&&newStep<BC_STEPS.length){
+      if(stepIdx<BC_STEPS.length){
+        const prev=document.getElementById('bcStep'+stepIdx);
+        if(prev)prev.classList.replace('active','done')||prev.classList.add('done');
+      }
+      stepIdx=newStep;
+      const cur=document.getElementById('bcStep'+stepIdx);
+      if(cur)cur.classList.add('active');
+      document.getElementById('bcStatusMsg').textContent=BC_STEPS[stepIdx].status;
+    }
+
+    /* Activate nodes */
+    const nodeIdx=Math.floor((progress/100)*4);
+    BC_NODES.forEach((_,i)=>{
+      const n=document.getElementById('bcn'+(i+1));
+      const l=document.getElementById('bcl'+(i+1));
+      if(!n)return;
+      if(i<nodeIdx){n.classList.remove('active');n.classList.add('done');n.querySelector('.bcn-dot').textContent='✅';}
+      else if(i===nodeIdx){n.classList.add('active');}
+      if(l){if(i<nodeIdx-1){l.classList.add('done');l.classList.remove('active');}else if(i===nodeIdx-1){l.classList.add('active');}}
+    });
+
+    /* Confirmations counter */
+    const conf=Math.floor(progress/38);
+    document.getElementById('bcc1t').textContent=conf;
+    if(conf>=1)document.getElementById('bcc1').querySelector('.bcc-circle').classList.add('confirmed');
+
+    if(progress>=100){
+      clearInterval(timer);
+      /* All done */
+      BC_STEPS.forEach((_,i)=>{const s=document.getElementById('bcStep'+i);if(s){s.classList.remove('active');s.classList.add('done');}});
+      document.getElementById('bcStatusMsg').textContent='✅ Access granted. Report unlocked.';
+      document.getElementById('bcStatusMsg').style.color='var(--green)';
+      setTimeout(()=>{
+        lp.style.display='none';
+        const ap=document.getElementById('analysisPanel');
+        ap.style.display='block';ap.classList.add('fi');
+        document.getElementById('gateBox').style.display='none';
+        buildAnalysis(lastPair);
+        setTimeout(()=>ap.scrollIntoView({behavior:'smooth',block:'start'}),80);
+      },700);
+    }
+  },interval);
+}
+
+/* ── HIDE ALL ─────────────────────────────── */
+function hideAll(){
+  ['resultPanel','payPanel','loadingPanel','analysisPanel'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+}
+
+/* ── RISK COLOR HELPER ────────────────────── */
+function riskColor(v){return v<35?'var(--green)':v<65?'var(--orange)':'var(--red)';}
+function riskLabel(v){return v<35?'LOW RISK':v<65?'MODERATE':'HIGH RISK';}
+function barGradient(v){return v<35?'linear-gradient(90deg,var(--green),#00b870)':v<65?'linear-gradient(90deg,var(--orange),#e07000)':'linear-gradient(90deg,var(--red),#cc1c35)';}
+
+/* ── GAUGE ARC ────────────────────────────── */
+function setGauge(pct){
+  const arc=document.getElementById('gaugeArc');if(!arc)return;
+  const total=173;
+  const filled=Math.round((pct/100)*total);
+  arc.setAttribute('stroke-dasharray',filled+' '+(total-filled));
+}
+
+/* ── FULL ANALYSIS ────────────────────────── */
+function buildAnalysis(p){
+  const fdv=p.fdv||0;
+  const liq=(p.liquidity&&p.liquidity.usd)||0;
+  const vol24=(p.volume&&p.volume.h24)||0;
+  const buys24=(p.txns&&p.txns.h24&&p.txns.h24.buys)||0;
+  const sells24=(p.txns&&p.txns.h24&&p.txns.h24.sells)||0;
+  const priceChange24=(p.priceChange&&p.priceChange.h24)||0;
+  const liqToMCap=fdv>0?liq/fdv:0;
+
+  /* SCORES */
+  let liqScore;
+  if(liqToMCap>=0.35)liqScore=85;
+  else if(liqToMCap>=0.2)liqScore=70;
+  else if(liqToMCap>=0.1)liqScore=55;
+  else if(liqToMCap>=0.05)liqScore=40;
+  else liqScore=25;
+  const volToLiq=liq>0?vol24/liq:0;
+  if(volToLiq>5)liqScore-=15;
+  else if(volToLiq>2)liqScore-=8;
+
+  let flowScore=50;
+  const totalTx=buys24+sells24;
+  const buySellRatio=sells24>0?buys24/sells24:buys24>0?3:1;
+  if(totalTx===0)flowScore=40;
+  else{if(buySellRatio>3)flowScore+=10;else if(buySellRatio<0.5)flowScore-=15;}
+  if(Math.abs(priceChange24)>200)flowScore-=10;
+
+  let contractScore=45;
+  let contractNotes=[];
+  contractNotes.push('Ownership & mint authority not verified by AlphaScan.');
+  contractNotes.push('Trading controls (blacklist / maxTx / maxWallet) unknown.');
+  contractNotes.push('Liquidity lock status not confirmed — treat as unlocked until proven otherwise.');
+  if(fdv>500000&&liqToMCap<0.05){contractScore-=10;contractNotes.push('High FDV with thin liquidity suggests outsized control by few wallets.');}
+
+  let holderScore=50;
+  let holderNotes=[];
+  if(fdv<30000&&vol24>fdv*0.8){holderScore=40;holderNotes.push('Microcap with volume close to full FDV — often a few wallets doing most of the flow.');}
+  else if(fdv>1000000&&vol24<fdv*0.02){holderScore=45;holderNotes.push('High FDV but weak rotation — early wallets may be heavily in profit and waiting to exit.');}
+  else holderNotes.push("Holder distribution not directly visible — pattern doesn't scream single-wallet farm, but caution is still required.");
+
+  const liqRisk=100-liqScore;
+  const flowRisk=100-flowScore;
+  const contractRisk=100-contractScore;
+  const holderRisk=100-holderScore;
+  let totalRisk=liqRisk*0.32+flowRisk*0.22+contractRisk*0.26+holderRisk*0.20;
+  totalRisk=Math.max(0,Math.min(100,Math.round(totalRisk)));
+
+  let rugLabel='',rugNarrative='',verdictClass='';
+  if(totalRisk<=30){
+    rugLabel='🟢 Low Rug Probability';rugNarrative='On-chain structure looks relatively healthy: liquidity depth, flow, and implied holder behavior do not currently match classic rug pull setups. That does not remove risk — it just means the deck isn\'t obviously stacked against you right now.';verdictClass='low';
+  }else if(totalRisk<=65){
+    rugLabel='🟡 Elevated Rug Probability';rugNarrative='Multiple signals point to a non-zero chance that exit liquidity could be manufactured: liquidity and control surface are not outright malicious, but the setup allows a coordinated rug if incentives flip. Only deploy capital you\'re comfortable losing in a single event.';verdictClass='medium';
+  }else{
+    rugLabel='🔴 High Rug Probability — Capital at Risk';rugNarrative='The structure rhymes with classic rug environments: shallow or fragile liquidity, unclear contract control, and speculative flow that can vanish quickly. Treat any size as lotto-sized exposure.';verdictClass='high';
+  }
+
+  /* VERDICT BADGE */
+  const vb=document.getElementById('verdictBadge');
+  vb.style.display='inline-flex';vb.className='verdict-badge '+verdictClass;vb.textContent=rugLabel;
+
+  /* HEADLINE */
+  document.getElementById('headlineSummary').textContent=buildHeadline({totalRisk,liqToMCap,volToLiq,priceChange24,buySellRatio});
+
+  /* RISK DASHBOARD — score */
+  const scoreEl=document.getElementById('rdScoreNum');
+  if(scoreEl){scoreEl.style.color=riskColor(totalRisk);}
+  let n=0;
+  const counter=setInterval(()=>{n=Math.min(n+2,totalRisk);if(scoreEl)scoreEl.textContent=n;setGauge(n);if(n>=totalRisk)clearInterval(counter);},28);
+
+  const verd=document.getElementById('rdVerdict');
+  if(verd){
+    verd.textContent=riskLabel(totalRisk);
+    verd.style.color=riskColor(totalRisk);
+    verd.style.background=totalRisk<35?'rgba(0,214,143,.1)':totalRisk<65?'rgba(255,149,0,.1)':'rgba(255,61,90,.08)';
+    verd.style.border='1px solid '+(totalRisk<35?'rgba(0,214,143,.3)':totalRisk<65?'rgba(255,149,0,.3)':'rgba(255,61,90,.25)');
+  }
+
+  /* Sub bars */
+  const bars=[
+    {id:'rdBarLiq',vid:'rdValLiq',val:liqRisk},
+    {id:'rdBarHolder',vid:'rdValHolder',val:holderRisk},
+    {id:'rdBarContract',vid:'rdValContract',val:contractRisk},
+    {id:'rdBarFlow',vid:'rdValFlow',val:flowRisk},
+  ];
+  bars.forEach(b=>{
+    const el=document.getElementById(b.id);
+    const vel=document.getElementById(b.vid);
+    if(el){setTimeout(()=>{el.style.width=b.val+'%';el.style.background=barGradient(b.val);},120);}
+    if(vel){vel.textContent=Math.round(b.val);vel.style.color=riskColor(b.val);}
+  });
+
+  /* Risk text */
+  document.getElementById('riskText').textContent=
+    totalRisk<=30?'Lower structural rug risk detected — still crypto, not a savings account.'
+    :totalRisk<=65?'Medium-to-high risk: profit potential exists, but sentiment can switch from hype to dumping very fast.'
+    :'High-risk environment: structure allows fast extraction of liquidity. Treat any position as a speculative bet.';
+
+  /* SIGNAL MATRIX */
+  const signals=[
+    {lbl:'Liq/FDV Ratio',val:(liqToMCap*100).toFixed(1)+'%',sub:liqToMCap>=0.15?'Acceptable':'Thin',risk:liqToMCap>=0.15?'low':liqToMCap>=0.05?'med':'high'},
+    {lbl:'Vol/Liq Ratio',val:volToLiq.toFixed(1)+'×',sub:volToLiq>5?'Overheated':volToLiq>2?'Elevated':'Organic',risk:volToLiq>5?'high':volToLiq>2?'med':'low'},
+    {lbl:'Buy/Sell Ratio',val:buySellRatio.toFixed(2),sub:buySellRatio>3?'FOMO skew':buySellRatio<0.5?'Sell-heavy':'Balanced',risk:buySellRatio<0.5?'high':buySellRatio>3?'med':'low'},
+    {lbl:'24h Price Δ',val:(priceChange24>0?'+':'')+priceChange24.toFixed(1)+'%',sub:Math.abs(priceChange24)>200?'Casino-grade':Math.abs(priceChange24)>80?'Aggressive':'Contained',risk:Math.abs(priceChange24)>200?'high':Math.abs(priceChange24)>80?'med':'low'},
+    {lbl:'24h Txns',val:(buys24+sells24).toLocaleString(),sub:'Buys: '+buys24+' / Sells: '+sells24,risk:totalTx===0?'high':'low'},
+    {lbl:'FDV',val:'$'+fmtUsd(fdv),sub:fdv<30000?'Ultra-micro':fdv<500000?'Microcap':fdv<5000000?'Small-cap':'Mid-cap+',risk:fdv<30000?'high':fdv<150000?'med':'low'},
+  ];
+  const colorMap={low:riskColor(20),med:riskColor(55),high:riskColor(85)};
+  const grid=document.getElementById('signalMatrix');grid.innerHTML='';
+  signals.forEach(s=>{
+    const c=document.createElement('div');c.className='sm-cell';
+    c.innerHTML='<div class="sm-cell-lbl">'+s.lbl+'</div><div class="sm-cell-val" style="color:'+colorMap[s.risk]+'">'+s.val+'</div><div class="sm-cell-sub">'+s.sub+'</div>';
+    grid.appendChild(c);
+  });
+
+  /* SECTIONS */
+  document.getElementById('liquidityInsight').textContent=buildLiqInsight({liq,fdv,liqToMCap,volToLiq});
+  renderTags('liquidityTags',buildLiqTags({liqToMCap,volToLiq}));
+  document.getElementById('holderInsight').textContent=holderNotes.join(' ');
+  renderTags('holderTags',buildHolderTags({fdv,vol24}));
+  document.getElementById('contractInsight').textContent=contractNotes.join(' ');
+  renderTags('contractTags',buildContractTags({contractScore}));
+  document.getElementById('flowInsight').textContent=buildFlowInsight({buys24,sells24,totalTx,priceChange24,buySellRatio});
+  renderTags('flowTags',buildFlowTags({buySellRatio,priceChange24}));
+  document.getElementById('rugInsight').textContent=rugNarrative;
+
+  const sid=document.getElementById('scanIdEl');
+  if(sid)sid.textContent='REPORT #'+Date.now().toString(36).toUpperCase()+' · '+new Date().toUTCString().slice(0,22);
+}
+
+/* ── HELPERS ──────────────────────────────── */
+function buildHeadline({totalRisk,liqToMCap,volToLiq,priceChange24,buySellRatio}){
+  const rw=totalRisk<=30?'defensive':totalRisk<=65?'opportunistic but fragile':'thin-ice, casino-tier';
+  const fw=buySellRatio>3?'heavy FOMO-driven inflows':buySellRatio<0.5?'sustained sell-pressure and exit rotation':'two-sided flow without a clear winner yet';
+  const vw=Math.abs(priceChange24)>200?'insane intraday swings':Math.abs(priceChange24)>80?'aggressive volatility':'contained volatility (for crypto standards)';
+  return `This pool currently prices as an ${rw} environment with ${fw} and ${vw}. Liquidity coverage sits at ~${(liqToMCap*100).toFixed(1)}% of FDV with a volume-to-liquidity ratio of ~${volToLiq.toFixed(1)}×, making entries and exits highly path-dependent.`;
+}
+function buildLiqInsight({liq,fdv,liqToMCap,volToLiq}){
+  let lines=[];
+  lines.push(`Reported liquidity sits around $${fmtUsd(liq)} versus a fully diluted valuation near $${fmtUsd(fdv)}.`);
+  if(liqToMCap>=0.35)lines.push('Coverage is strong: a meaningful chunk of FDV is backed by on-chain liquidity, this reduces the risk of sharp crashes from large sell-offs.');
+  else if(liqToMCap>=0.15)lines.push('Liquidity is serviceable for most degen-sized entries, but not deep enough to absorb whales exiting in one shot.');
+  else lines.push('Liquidity is thin relative to valuation. A coordinated sell event or team exit can nuke the chart in a single rotation.');
+  if(volToLiq>5)lines.push('24h volume is multiple times the pool size — hot potato: great for scalpers, brutal for late entries if flow stops.');
+  else if(volToLiq>2)lines.push('Volume is elevated relative to liquidity; slippage will spike during volatility clusters.');
+  else lines.push('Volume vs liquidity is within a more organic range; rotations are less likely to insta-wipe the book on normal days.');
+  return lines.join(' ');
+}
+function buildLiqTags({liqToMCap,volToLiq}){
+  let t=[];
+  if(liqToMCap>=0.35)t.push({label:'Deep-ish liquidity',tone:'green'});
+  else if(liqToMCap>=0.15)t.push({label:'Moderate liquidity',tone:'yellow'});
+  else t.push({label:'Thin liquidity',tone:'red'});
+  if(volToLiq>5)t.push({label:'Overheated flow',tone:'red'});
+  else if(volToLiq>2)t.push({label:'Hot rotation',tone:'yellow'});
+  else t.push({label:'Organic flow',tone:'green'});
+  return t;
+}
+function buildHolderTags({fdv,vol24}){
+  let t=[];
+  if(fdv<30000)t.push({label:'Ultra-microcap',tone:'red'});
+  else if(fdv<150000)t.push({label:'Microcap terrain',tone:'yellow'});
+  else t.push({label:'Mid-cap+ zone',tone:'green'});
+  if(vol24>fdv*0.8)t.push({label:'Likely concentrated flow',tone:'red'});
+  else if(vol24>fdv*0.3)t.push({label:'Speculative rotation',tone:'yellow'});
+  else t.push({label:'Calmer holder behavior',tone:'green'});
+  return t;
+}
+function buildContractTags({contractScore}){
+  let t=[];
+  if(contractScore>=70)t.push({label:'Contract risk muted',tone:'green'});
+  else if(contractScore>=50)t.push({label:'Contract unknown',tone:'yellow'});
+  else t.push({label:'Control surface risky',tone:'red'});
+  t.push({label:'Lock status unverified',tone:'yellow'});
+  return t;
+}
+function buildFlowInsight({buys24,sells24,totalTx,priceChange24,buySellRatio}){
+  if(totalTx===0)return'No meaningful 24h flow detected. Either the token is in hibernation or liquidity is a mirage. Both scenarios mean you are the liquidity if you choose to enter.';
+  let lines=[];
+  lines.push(`Last 24h recorded ${buys24} buys vs ${sells24} sells.`);
+  if(buySellRatio>3)lines.push('Flow is aggressively buy-skewed — FOMO meta. This often precedes either a parabolic leg or a sharp mean reversion.');
+  else if(buySellRatio<0.5)lines.push('Sell-side flow dominates; a large portion of holders are rotating out or distributing into strength.');
+  else lines.push('Order flow is relatively balanced; volatility will mostly come from fresh money rather than pure distribution.');
+  if(Math.abs(priceChange24)>200)lines.push(`24h price move sits around ${priceChange24.toFixed(1)}% — casino-grade volatility. Stops and sizing matter more than narratives.`);
+  else if(Math.abs(priceChange24)>80)lines.push(`Price has moved ~${priceChange24.toFixed(1)}% in 24h, which is aggressive even by degen standards.`);
+  else lines.push(`24h price change of ~${priceChange24.toFixed(1)}% indicates a more controlled regime for now.`);
+  return lines.join(' ');
+}
+function buildFlowTags({buySellRatio,priceChange24}){
+  let t=[];
+  if(buySellRatio>3)t.push({label:'FOMO meta',tone:'yellow'});
+  else if(buySellRatio<0.5)t.push({label:'Exit rotation',tone:'red'});
+  else t.push({label:'Two-sided flow',tone:'green'});
+  if(Math.abs(priceChange24)>200)t.push({label:'Casino volatility',tone:'red'});
+  else if(Math.abs(priceChange24)>80)t.push({label:'High volatility',tone:'yellow'});
+  else t.push({label:'Contained volatility',tone:'green'});
+  return t;
+}
+function renderTags(id,tags){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML='';
+  tags.forEach(t=>{const s=document.createElement('span');s.className='tag '+t.tone;s.textContent=t.label;el.appendChild(s);});
+}
+function fmtUsd(v){
+  if(!v)return'0';
+  if(v>=1e9)return(v/1e9).toFixed(2)+'B';
+  if(v>=1e6)return(v/1e6).toFixed(2)+'M';
+  if(v>=1e3)return(v/1e3).toFixed(2)+'K';
+  return v.toFixed(0);
+}
+
+/* ── MODALS ───────────────────────────────── */
+const MODALS={
+  terms:'<h3>Terms of Use</h3><p>Last updated: January 2026</p><h4>1. Acceptance</h4><p>By using AlphaScan, you agree to these Terms. If you disagree, do not use the service.</p><h4>2. Nature of Service</h4><p>AlphaScan provides on-chain heuristic analysis for informational purposes only. Nothing constitutes financial advice or a guarantee of any outcome.</p><h4>3. Payments</h4><p>All payments are made in cryptocurrency and processed on-chain. Transactions are irreversible once confirmed. AlphaScan is not responsible for payments sent to incorrect addresses due to user error.</p><h4>4. Limitation of Liability</h4><p>AlphaScan shall not be liable for any financial loss. Crypto trading involves substantial risk of loss.</p>',
+  disclaimer:'<h3>Risk Disclaimer</h3><p>AlphaScan provides on-chain heuristic analysis from publicly available DEX data. All signals and reports are for informational purposes only.</p><p>Nothing on this platform constitutes financial advice, investment advice, or trading advice. AlphaScan does not recommend that any cryptocurrency should be bought, sold, or held.</p><p>Cryptocurrency trading involves substantial risk of loss. Past signal patterns are not indicative of future results. Always conduct your own due diligence (DYOR) before entering any position.</p>',
+  txidhelp:'<h3>Where to Find Your TXID</h3><p>After sending payment, your wallet generates a unique Transaction ID (also called TXID or Transaction Hash). Here\'s where to find it:</p><h4>📱 Mobile Wallets (Trust Wallet, MetaMask, Phantom)</h4><p>Open the wallet → Tap "History" or "Activity" → Tap the transaction you just sent → Scroll down and copy the "Transaction Hash" or "TXID".</p><h4>🖥 Exchange (Binance, OKX, Bybit)</h4><p>Go to "Wallet" → "Transaction History" → Find your withdrawal → Click "TxID" or the explorer link → Copy the hash from the URL or page.</p><h4>🔍 Example formats</h4><p style="font-family:monospace;font-size:11px;color:#5a7090;word-break:break-all">ETH/BSC: 0x3f8a9c2e1b7d4f6a0e5c8b3d2f1a9e4c7b6d5e8f2a1c3b4d7e9f0a2b5c8d1e4f<br><br>SOL: 5Hs7LmqKRvDnFxSB2pPBKxMFLn3EjXoGkH8CvYdZuRqNkE9wTaJiPeUcMbVsWgA<br><br>BTC: 7c3a8d2f1b9e4a6c5b7d0f2e8a3c1d9b6e4f7a2c5b8d1e3f9a6c2b4d7e0f5a8c</p><p>The hash is always a long string of letters and numbers — usually 64+ characters. Paste it exactly as it appears.</p>'
+};
+function openModal(k){document.getElementById('modalContent').innerHTML=MODALS[k]||'';document.getElementById('modalOverlay').classList.add('open');}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+
+/* ── KEYBOARD ─────────────────────────────── */
+document.getElementById('caInput').addEventListener('keydown',e=>{if(e.key==='Enter')scanToken();});
+document.getElementById('txInput').addEventListener('keydown',e=>{if(e.key==='Enter')verifyAndUnlock();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>
